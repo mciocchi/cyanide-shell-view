@@ -14,37 +14,14 @@
 ;; along with CyanIDE.  If not, see <http://www.gnu.org/licenses/>.
 
 (require 'cyanide-project)
-(require 'cyanide-view)
+(require 'cyanide-view-simple)
 
-(cyanide-view
+(cyanide-view-simple
  :id 'cyanide-shell-view
- :display-name "cyanide-shell-view"
- :teardown-hook '(cyanide-default-disabler)
+ :teardown-hook '((lambda nil
+                    (delete-frame cyanide-shell-frame)))
  :load-hook '((lambda nil
                 (progn
-                  (when cyanide-current-project
-                    (setq frame-title-format
-                          (cyanide-project-and-views-frame-title)))
-                  ;; Prevent annoying emacs habit of splitting
-                  ;; windows without prompting from the user.
-                  ;; Remember original values so that they can
-                  ;; be restored when the view is torn down.
-                  (setq split-height-threshold-orig
-                        split-height-threshold)
-                  (setq split-width-threshold-orig
-                        split-width-threshold)
-                  (setq split-height-threshold 80)
-                  (setq split-width-threshold 9999)
-                  (if cyanide-current-project
-                      (cyanide-render-menu-with-tasks cyanide-current-project
-                                                      'cyanide-default-menu-with-tasks)
-                    (cyanide-menu-render (cyanide-get-one-by-slot 'cyanide-default-menu
-                                                                  cyanide-menu-item-collection
-                                                                  ":id"
-                                                                  'eq)
-                                         'cyanide-default-menu
-                                         cyanide-mode-map))
-                  (cd-proj-root)
                   (setq frame-orig (selected-frame))
                   (setq window-orig (selected-window))
                   (setq cyanide-shell-frame (make-frame))
